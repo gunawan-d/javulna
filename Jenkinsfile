@@ -36,13 +36,13 @@ pipeline {
         stage('SAST SonarQube') {
             agent {
               docker {
-                  image 'sonarsource/sonar-scanner-cli:latest'
-                  args '--network host -v ".:/usr/src" --entrypoint='
+                    image 'maven:3.9.4-eclipse-temurin-17-alpine'
+                    args '-u root --network host'
               }
             }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh 'sonar-scanner -Dsonar.projectKey=javulna -Dsonar.qualitygate.wait=true -Dsonar.sources=. -Dsonar.host.url=http://147.139.166.250:9009 -Dsonar.token=$SONARQUBE_CREDENTIALS_PSW' 
+                    sh 'mvn sonar:sonar -Dsonar.token=$SONARQUBE_CREDENTIALS_PSW -Dsonar.projectKey=WebGoat -Dsonar.qualitygate.wait=true -Dsonar.host.url=http://147.139.166.250:9009 -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco-unit-test-coverage-report/jacoco.xml' 
                 }
             }
         }
